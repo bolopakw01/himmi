@@ -1,70 +1,84 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
+    const header = document.querySelector('.header');
+    const navToggle = document.querySelector('.nav-toggle');
+    const navbar = document.querySelector('.navbar');
 
-    // --- Login Modal Functionality ---
-    const modal = document.getElementById("loginModal");
-    const loginBtn = document.getElementById("loginBtn");
-    const closeBtn = document.querySelector("#loginModal .close-btn");
-    const registerLink = document.getElementById("registerLink");
-
-    if (loginBtn) {
-        loginBtn.onclick = function (e) {
-            e.preventDefault();
-            modal.style.display = "block";
-        }
-    }
-    
-    if (closeBtn) {
-        closeBtn.onclick = function () {
-            modal.style.display = "none";
-        }
-    }
-
-    // --- Form Submission & Register Link ---
-    const loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-
-            // This is a front-end DEMO only.
-            if (username === "admin" && password === "himmi123") {
-                alert("Login berhasil! (DEMO)\nAnda akan diarahkan ke dashboard admin.");
-                modal.style.display = "none";
+    // --- Sticky Header (Optional) ---
+    if (header) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
             } else {
-                alert("Username atau password salah!");
+                header.classList.remove('scrolled');
             }
         });
     }
 
-    if(registerLink) {
-        registerLink.addEventListener("click", function(e) {
-            e.preventDefault();
-            alert("Fitur pendaftaran akan terhubung ke sistem back-end.");
+    // --- Mobile Navigation Toggle ---
+    if (navToggle && navbar) {
+        navToggle.addEventListener('click', () => {
+            const isNavActive = navbar.classList.toggle('active');
+            navToggle.setAttribute('aria-expanded', isNavActive);
+            const icon = navToggle.querySelector('i');
+            if (isNavActive) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
         });
     }
     
-    // --- Close modal when clicking outside of it ---
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
-    // --- Animate on Scroll Functionality ---
-    const scrollObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
+    // --- Dropdown Menu Logic (Desktop Hover with Delay & Mobile Click) ---
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        let hoverTimeout;
+        const link = dropdown.querySelector('a');
+        
+        const openDropdown = () => {
+            if (window.innerWidth > 992) {
+                clearTimeout(hoverTimeout);
+                dropdown.classList.add('active');
             }
-        });
-    }, {
-        threshold: 0.1
+        };
+
+        const closeDropdown = () => {
+             if (window.innerWidth > 992) {
+                hoverTimeout = setTimeout(() => {
+                    dropdown.classList.remove('active');
+                }, 200); // 200ms delay before closing
+            }
+        };
+        
+        const toggleDropdownMobile = (e) => {
+            if (window.innerWidth <= 992) {
+                // Prevent link navigation only if it's the main dropdown link
+                if (e.currentTarget === link) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                }
+            }
+        };
+
+        dropdown.addEventListener('mouseenter', openDropdown);
+        dropdown.addEventListener('mouseleave', closeDropdown);
+        link.addEventListener('click', toggleDropdownMobile);
     });
 
-    document.querySelectorAll('.animate-on-scroll').forEach(element => {
-        scrollObserver.observe(element);
-    });
 
+    // --- Set Active State for Multi-Page Nav Links ---
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-list .nav-link');
+    
+    navLinks.forEach(link => {
+        const linkPage = link.getAttribute('href').split('/').pop();
+
+        if (linkPage === currentPage) {
+            link.classList.add('active');
+
+            // Also activate parent dropdown if it's a dropdown item
+            const parentDropdown = link.closest('.dropdown');
+            if (parentDropdown) {
+                parentDropdown.querySelector('a.nav-link').classList.add('active');
+            }
+        }
+    });
 });
