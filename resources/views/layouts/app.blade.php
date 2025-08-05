@@ -19,16 +19,29 @@
             @include('layouts.navigation')
 
             <!-- Page Heading -->
-            @isset($header)
+            @if (isset($header))
                 <header class="bg-white shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
-            @endisset
+            @endif
 
             <!-- Page Content -->
             <main>
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-4">
+                    @if (session('success'))
+                        <div class="mb-4 p-4 bg-green-100 border border-green-200 text-green-700 rounded-md" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="mb-4 p-4 bg-red-100 border border-red-200 text-red-700 rounded-md" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                </div>
+
                 {{ $slot }}
             </main>
         </div>

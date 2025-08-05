@@ -1,3 +1,7 @@
+/* ================================================= */
+/* COMPLETE CSS FOR HIMMI WEBSITE WITH MODERN NAVBAR */
+/* ================================================= */
+
 /* === CSS VARIABLES === */
 :root {
     --blue-dark: #1A288A;
@@ -9,9 +13,11 @@
     --gray-border: #e0e0e0;
     --text-color: #333;
     --text-muted: #6c757d;
-    --header-height: 70px;
+    --header-height: 90px;
+    --header-height-scrolled: 70px;
     --border-radius: 8px;
     --shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    --gradient-blue: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
 /* === BASE STYLES === */
@@ -31,12 +37,10 @@ body {
     background-color: var(--white);
     color: var(--text-color);
     line-height: 1.7;
+    padding-top: var(--header-height);
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
     color: var(--blue-dark);
     font-weight: 700;
 }
@@ -108,138 +112,225 @@ img {
     transform: translateX(5px);
 }
 
-/* === HEADER & NAVBAR === */
+/* ================================================= */
+/* V3: STYLING NAVBAR PROFESIONAL (PUTIH / BIRU) */
+/* ================================================= */
+
+/* --- 1. Pengaturan Dasar Header & Layout --- */
 .header {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--gray-border);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
     z-index: 1000;
+    padding: 15px 0;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: var(--header-height);
-    padding: 0 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-.logo {
+.nav-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    color: var(--blue-dark);
 }
 
-.logo img {
+/* Penyesuaian agar konten utama tidak tertutup header */
+.hero, .page-header {
+    padding-top: 120px;
+}
+
+/* --- 2. State Normal (Navbar Putih) --- */
+.header {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- 2a. Pengaturan Tata Letak Logo --- */
+.header .logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+}
+
+.header .logo img {
     height: 50px;
+    width: auto;
 }
 
-.logo-text h1 {
-    font-size: 1.5rem;
-    margin: 0;
+/* Teks logo yang diperkecil */
+.header .logo-text h1 {
+    color: #1e3c72;
+    font-size: 1.5rem; /* Diperkecil dari ukuran default */
+    font-weight: 700;
+    margin: 5px;
+    line-height: 1.2;
+    transition: color 0.4s ease;
 }
 
-.logo-text p {
-    font-size: 0.8rem;
-    opacity: 0.7;
-    margin: 0;
-    line-height: 1;
+.header .logo-text p {
+    color: #555; /* Warna lebih soft */
+    font-size: 0.75rem; /* Diperkecil dari ukuran default */
+    margin: 5px;
+    line-height: 1.3;
+    transition: color 0.4s ease;
 }
 
-.nav-list {
+.header .nav-link {
+    color: #333;
+    transition: color 0.4s ease;
+}
+
+.header .nav-toggle i {
+    color: #333;
+    transition: color 0.4s ease;
+}
+
+/* --- 3. State Saat di-scroll (Navbar Biru) --- */
+.header.scrolled {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header.scrolled .logo-text h1 {
+    color: white;
+    font-size: 1.5rem; /* Tetap konsisten dengan state normal */
+}
+
+.header.scrolled .logo-text p {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.75rem; /* Tetap konsisten dengan state normal */
+}
+
+.header.scrolled .nav-link,
+.header.scrolled .nav-toggle i {
+    color: white;
+    text-shadow: none;
+}
+
+/* --- 4. Styling Menu, Link Aktif, dan Dropdown --- */
+.navbar .nav-list {
     display: flex;
-    gap: 0.5rem;
+    list-style: none;
     align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
-.nav-link {
-    color: var(--text-color);
+.navbar .nav-item {
+    position: relative;
+    margin: 0 15px;
+}
+
+.navbar .nav-link {
     font-weight: 600;
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
+    padding: 10px 0;
     position: relative;
-    transition: color 0.3s, background-color 0.3s;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    font-size: 0.95rem;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    color: var(--blue-dark);
-    background-color: var(--gray-light);
+.navbar .nav-link i {
+    font-size: 0.7em;
+    margin-left: 8px;
+    transition: transform 0.3s ease;
 }
 
-.dropdown {
-    position: relative;
+.nav-item.dropdown:hover .nav-link i {
+    transform: rotate(180deg);
 }
 
-.dropdown .fa-chevron-down {
-    font-size: 0.7rem;
-    margin-left: 4px;
-    pointer-events: none;
-}
-
-.dropdown-menu {
-    display: none;
+/* Garis bawah untuk menu aktif/hover */
+.navbar .nav-link::after {
+    content: '';
     position: absolute;
-    top: 90%;
+    bottom: -2px;
     left: 0;
-    background-color: var(--white);
-    box-shadow: var(--shadow);
-    padding: 0.5rem 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffc107;
+    transition: width 0.4s ease;
+}
+
+.navbar .nav-link.active::after,
+.navbar .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 8px 0;
     margin-top: 15px;
-    border-radius: var(--border-radius);
-    width: 220px;
-    z-index: 1001;
-    border-top: 3px solid var(--yellow);
+    min-width: 220px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transform-origin: top center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: scale(0.95) translateY(10px) translateX(-50%);
+    z-index: 1001;
 }
 
-.dropdown.active .dropdown-menu {
-    display: block;
+.nav-item.dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: scale(1) translateY(0) translateX(-50%);
 }
 
-.dropdown-menu a {
-    padding: 0.75rem 1.5rem;
+.dropdown-menu li a {
     display: block;
-    color: var(--text-color);
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
+    font-size: 0.85rem;
 }
 
-.dropdown-menu a:hover {
-    background-color: var(--gray-light);
-    color: var(--blue-dark);
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.dropdown-menu li a:hover {
+    background-color: #f5f5f5;
+    color: #1e3c72;
 }
 
 .nav-toggle {
     display: none;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1001;
 }
 
-/* === HERO (INDEX PAGE) === */
+/* === HERO SECTION === */
 .hero {
     background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(26, 40, 138, 0.8)), url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDN8fGNvZGluZ3xlbnwwfHx8fDE2Mzg3OTY4Nzk&ixlib=rb-1.2.1&q=80&w=1920') center/cover no-repeat;
     background-attachment: fixed;
-    height: 90vh;
+    height: calc(100vh - var(--header-height));
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--white);
+    margin-top: 0;
+    padding-top: var(--header-height);
 }
 
 .hero-content .hero-logos {
@@ -305,10 +396,9 @@ img {
     border-color: var(--white);
 }
 
-/* === PAGE HEADER (INTERNAL PAGES) === */
+/* === PAGE HEADER === */
 .page-header {
-    height: 90vh;
-    /* UKURAN DISAMAKAN DENGAN HERO */
+    height: calc(100vh - var(--header-height));
     color: var(--white);
     display: flex;
     align-items: center;
@@ -318,6 +408,8 @@ img {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    margin-top: 0;
+    padding-top: var(--header-height);
 }
 
 .page-header::before {
@@ -349,7 +441,7 @@ img {
     margin: 1rem auto 0 auto;
 }
 
-/* --- Background Images for Each Page Header (3rd Party) --- */
+/* Background Images for Each Page Header */
 #profil-page .page-header {
     background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80');
 }
@@ -374,8 +466,7 @@ img {
     background-image: url('https://images.unsplash.com/photo-1534536281715-e28d76689b4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80');
 }
 
-
-/* === ABOUT SECTION & HOVER EFFECT === */
+/* === ABOUT SECTION === */
 .about-content {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -387,7 +478,6 @@ img {
     position: relative;
     width: 100%;
     padding-top: 75%;
-    /* Aspect ratio 4:3 */
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     overflow: hidden;
@@ -423,7 +513,7 @@ img {
     opacity: 1;
 }
 
-/* === HOME PAGE SUMMARIES === */
+/* === PROGRAM SUMMARY === */
 .program-summary-section {
     background-color: var(--gray-light);
 }
@@ -483,7 +573,7 @@ img {
     box-shadow: var(--shadow);
 }
 
-/* === PROFIL PAGE (TIMELINE) === */
+/* === VISI MISI SECTION === */
 .visi-misi-section {
     background-color: var(--gray-light);
 }
@@ -524,6 +614,7 @@ img {
     margin-top: 5px;
 }
 
+/* === TIMELINE SECTION === */
 .timeline-horizontal-container {
     display: flex;
     justify-content: space-between;
@@ -597,11 +688,10 @@ img {
     margin-bottom: 0.5rem;
 }
 
-/* === PROGRAM KERJA PAGE === */
+/* === PROGRAM KERJA SECTION === */
 .division-section {
     margin-bottom: 4rem;
     text-align: center;
-    /* PUSATKAN KONTEN DIVISI */
 }
 
 .division-title {
@@ -617,7 +707,6 @@ img {
     flex-direction: column;
     gap: 1.5rem;
     text-align: left;
-    /* Kembalikan text-align untuk item */
 }
 
 .program-item {
@@ -670,11 +759,10 @@ img {
     text-align: center;
 }
 
-/* === STRUKTUR PAGE === */
+/* === STRUKTUR ORGANISASI SECTION === */
 .structure-group {
     margin-bottom: 4rem;
     text-align: center;
-    /* PUSATKAN JUDUL GRUP */
 }
 
 .bph-grid,
@@ -713,13 +801,11 @@ img {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-bottom: 3px solid var(--yellow);
-    /* KEMBALI KE 3PX */
 }
 
 .member-info {
     padding: 1.5rem 1rem;
     text-align: center;
-    /* TEKS DI TENGAH */
 }
 
 .member-info h4 {
@@ -745,8 +831,7 @@ img {
     border: 2px solid var(--yellow);
 }
 
-/* === ARTIKEL, GALERI, KONTAK, FOOTER, RESPONSIVE (TETAP SAMA) === */
-/* ... (salin sisa CSS dari respons sebelumnya) ... */
+/* === ARTIKEL SECTION === */
 .artikel-category {
     margin-bottom: 4rem;
 }
@@ -789,6 +874,7 @@ img {
     color: var(--text-muted);
 }
 
+/* === GALERI SECTION === */
 .gallery-grid-full {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -812,6 +898,7 @@ img {
     transform: scale(1.1);
 }
 
+/* === KONTAK SECTION === */
 .contact-page-grid {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
@@ -860,6 +947,7 @@ img {
     border: 0;
 }
 
+/* === FOOTER === */
 .footer {
     background-color: var(--black);
     color: var(--white);
@@ -921,15 +1009,10 @@ img {
     text-align: center;
 }
 
+/* === RESPONSIVE DESIGN === */
 @media (max-width: 992px) {
     .nav-toggle {
         display: block;
-        font-size: 1.5rem;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        color: var(--blue-dark);
-        z-index: 1001;
     }
 
     .navbar {
@@ -939,8 +1022,8 @@ img {
         width: 300px;
         height: 100vh;
         background-color: var(--white);
-        padding: 6rem 2rem 2rem 2rem;
-        transition: right 0.4s ease-in-out;
+        padding: 6rem 2rem 2rem;
+        transition: right 0.4s ease;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
     }
 
@@ -955,12 +1038,16 @@ img {
     }
 
     .nav-link {
-        font-size: 1.2rem;
+        color: var(--text-color);
+        font-size: 1.1rem;
         width: 100%;
     }
 
-    .dropdown.active .dropdown-menu {
-        display: block;
+    .nav-link::after {
+        background-color: var(--blue-dark);
+    }
+
+    .dropdown-menu {
         position: static;
         width: 100%;
         box-shadow: none;
@@ -968,13 +1055,17 @@ img {
         margin-top: 1rem;
         background-color: var(--gray-light);
         padding-left: 1rem;
+        display: none;
     }
 
-    .dropdown .fa-chevron-down {
-        transition: transform 0.3s;
+    .dropdown.active .dropdown-menu {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
     }
 
-    .dropdown.active .fa-chevron-down {
+    .dropdown.active .nav-link i {
         transform: rotate(180deg);
     }
 

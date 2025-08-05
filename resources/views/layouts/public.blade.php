@@ -12,6 +12,7 @@
 <body>
     <header class="header">
         <div class="header-container container">
+            {{-- Bagian Kiri: Logo --}}
             <a href="{{ route('home') }}" class="logo">
                 <img src="{{ asset('assets/img/LOGO.png') }}" alt="HIMMI Logo">
                 <div class="logo-text">
@@ -19,28 +20,55 @@
                     <p>UNIVERSITAS AMIKOM YOGYAKARTA</p>
                 </div>
             </a>
-            <nav class="navbar">
-                <ul class="nav-list">
-                    <li class="nav-item"><a href="{{ route('home') }}" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="{{ route('profil') }}" class="nav-link">Profil</a></li>
-                    <li class="nav-item"><a href="{{ route('program') }}" class="nav-link">Program Kerja</a></li>
-                    <li class="nav-item"><a href="{{ route('struktur') }}" class="nav-link">Struktur</a></li>
-                    <li class="nav-item dropdown">
-                        <a href="{{ route('artikel') }}" class="nav-link">Artikel <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ route('artikel') }}#dev">Pengembangan IT</a></li>
-                            <li><a href="{{ route('artikel') }}#karir">Karir & Tips</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a href="{{ route('galeri') }}" class="nav-link">Galeri</a></li>
-                    <li class="nav-item"><a href="{{ route('klien.index') }}" class="nav-link">Klien Kami</a></li>
-                    <li class="nav-item"><a href="{{ route('kontak') }}" class="nav-link">Kontak</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <button class="nav-toggle" aria-label="Buka menu" aria-expanded="false">
-                    <i class="fas fa-bars"></i>
-                </button>
+
+            {{-- Wrapper Baru untuk Bagian Kanan --}}
+            <div class="nav-wrapper">
+                <nav class="navbar">
+                    <ul class="nav-list">
+                        {{-- Home --}}
+                        <li class="nav-item">
+                            <a href="{{ route('home') }}" class="nav-link {{ Request::routeIs('home') ? 'active' : '' }}">Home</a>
+                        </li>
+                        
+                        {{-- Dropdown Tentang Kami --}}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link {{ Request::routeIs('profil', 'struktur', 'klien.index') ? 'active' : '' }}">
+                                Tentang Kami <i class="fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route('profil') }}">Profil Perusahaan</a></li>
+                                <li><a href="{{ route('struktur') }}">Struktur Organisasi</a></li>
+                                <li><a href="{{ route('klien.index') }}">Klien & Partner</a></li>
+                            </ul>
+                        </li>
+                        
+                        {{-- Program Kerja --}}
+                        <li class="nav-item">
+                            <a href="{{ route('program') }}" class="nav-link {{ Request::routeIs('program') ? 'active' : '' }}">Program Kerja</a>
+                        </li>
+
+                        {{-- Dropdown Media --}}
+                        <li class="nav-item dropdown">
+                             <a href="#" class="nav-link {{ Request::routeIs('artikel', 'galeri') ? 'active' : '' }}">
+                                Media <i class="fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route('artikel') }}">Artikel</a></li>
+                                <li><a href="{{ route('galeri') }}">Galeri Foto</a></li>
+                            </ul>
+                        </li>
+                        
+                        {{-- Kontak --}}
+                        <li class="nav-item">
+                            <a href="{{ route('kontak') }}" class="nav-link {{ Request::routeIs('kontak') ? 'active' : '' }}">Kontak</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="nav-toggle" aria-label="Buka menu" aria-expanded="false">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -84,6 +112,7 @@
             </div>
         </div>
     </footer>
+
     <script src="{{ asset('assets/js/main.js') }}"></script>
     @stack('scripts')
 </body>
