@@ -3,7 +3,7 @@
 @section('title', 'Artikel & Wawasan - HIMMI AMIKOM Yogyakarta')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/articlphp artisan fix:articleslugsphp artisan fix:articleslugsphp artisan fix:articleslugse.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/article.css') }}">
 @endpush
 
 @section('content')

@@ -14,10 +14,14 @@
     padding: 4rem 0; 
     background-color: #f8f9fa; 
 }
-.article-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-    gap: 2rem; 
+
+.article-grid {
+    display: grid;
+    /* Gunakan lebar tetap untuk konsistensi, auto-fill akan membuat ruang kosong jika diperlukan */
+    grid-template-columns: repeat(auto-fill, minmax(350px, 350px));
+    gap: 2rem;
+    /* Pusatkan blok kartu di tengah container */
+    justify-content: center;
 }
 
 /* PERBAIKAN: Selector dibuat lebih spesifik */
