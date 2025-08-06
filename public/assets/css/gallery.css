@@ -1,3 +1,4 @@
+/* File: public/assets/css/gallery.css */
 /* Header Halaman Galeri */
 .gallery-header {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -143,6 +144,7 @@
 .lightbox-content {
     max-width: 90%;
     max-height: 90%;
+    position: relative;
 }
 
 .lightbox-img {
@@ -151,6 +153,7 @@
     display: block;
     margin: 0 auto;
     border-radius: 5px;
+    object-fit: contain;
 }
 
 .lightbox-caption {
@@ -158,6 +161,7 @@
     text-align: center;
     margin-top: 1rem;
     font-size: 1.2rem;
+    padding: 0 2rem;
 }
 
 .close-btn {
@@ -168,12 +172,22 @@
     font-size: 2rem;
     cursor: pointer;
     transition: color 0.3s ease;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
 }
 
 .close-btn:hover {
     color: #a777e3;
+    background: rgba(0, 0, 0, 0.8);
 }
 
+/* Improved navigation buttons */
 .prev-btn, .next-btn {
     position: absolute;
     top: 50%;
@@ -182,11 +196,21 @@
     font-size: 2rem;
     cursor: pointer;
     padding: 1rem;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    user-select: none;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
 }
 
 .prev-btn:hover, .next-btn:hover {
     color: #a777e3;
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .prev-btn {
@@ -195,6 +219,13 @@
 
 .next-btn {
     right: 2rem;
+}
+
+/* Loading indicator */
+.lightbox-loading {
+    color: white;
+    font-size: 1.5rem;
+    display: none;
 }
 
 /* Responsive */
@@ -212,6 +243,12 @@
         padding: 0.4rem 1rem;
         font-size: 0.9rem;
     }
+
+    .prev-btn, .next-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -228,5 +265,20 @@
         margin: 0.2rem;
         padding: 0.3rem 0.8rem;
         font-size: 0.8rem;
+    }
+
+    .prev-btn, .next-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+        padding: 0.5rem;
+    }
+
+    .close-btn {
+        top: 1rem;
+        right: 1rem;
+        width: 35px;
+        height: 35px;
+        font-size: 1.5rem;
     }
 }

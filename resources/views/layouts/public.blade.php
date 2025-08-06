@@ -108,7 +108,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 HIMMI AMIKOM Yogyakarta. Didesain oleh (Nama Anda).</p>
+                <p>&copy; 2025 HIMMI AMIKOM Yogyakarta. Didesain oleh Bolopa KW.</p>
             </div>
         </div>
     </footer>

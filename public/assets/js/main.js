@@ -1,108 +1,141 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Sticky Header with Parallax Effect ---
+    // --- 1. Efek Header saat di-scroll ---
     const header = document.querySelector('.header');
     if (header) {
+        // Set initial state
+        header.classList.toggle('scrolled', window.scrollY > 50);
+        
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 50);
         });
     }
 
-    // --- Mobile Navigation Toggle ---
+    // --- 2. Fungsionalitas Menu Mobile (Toggle Burger) ---
     const navToggle = document.querySelector('.nav-toggle');
     const navbar = document.querySelector('.navbar');
-    
     if (navToggle && navbar) {
-        navToggle.addEventListener('click', () => {
+        navToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah event bubbling ke document
             const isNavActive = navbar.classList.toggle('active');
             navToggle.setAttribute('aria-expanded', isNavActive);
             
-            // Toggle hamburger icon
             const icon = navToggle.querySelector('i');
             if (icon) {
                 icon.classList.toggle('fa-bars', !isNavActive);
                 icon.classList.toggle('fa-times', isNavActive);
             }
+            
+            // Tutup semua dropdown saat mobile menu ditutup
+            if (!isNavActive) {
+                document.querySelectorAll('.nav-item.dropdown.active').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
         });
     }
 
-    // --- Enhanced Dropdown Menu Logic ---
-    // (Desktop Hover with Delay & Mobile Click with Submenu Handling)
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
+    // --- 3. Logika Dropdown yang Disempurnakan (Hover & Klik) ---
+    document.querySelectorAll('.nav-item.dropdown').forEach(dropdown => {
+        const link = dropdown.querySelector('a.nav-link');
         let hoverTimeout;
-        const link = dropdown.querySelector('a');
-        
-        // Desktop hover behavior
-        const openDropdown = () => {
-            if (window.innerWidth > 992) {
+
+        // --- A. Logika Hover untuk Desktop ---
+        if (window.innerWidth > 992) {
+            dropdown.addEventListener('mouseenter', () => {
                 clearTimeout(hoverTimeout);
                 dropdown.classList.add('active');
-            }
-        };
+            });
 
-        const closeDropdown = () => {
-            if (window.innerWidth > 992) {
+            dropdown.addEventListener('mouseleave', () => {
                 hoverTimeout = setTimeout(() => {
-                    dropdown.classList.remove('active');
+                    if (!dropdown.matches(':hover')) {
+                        dropdown.classList.remove('active');
+                    }
                 }, 200);
-            }
-        };
-        
-        // Mobile click behavior
-        const toggleDropdownMobile = (e) => {
-            if (window.innerWidth <= 992) {
+            });
+        }
+
+        // --- B. Logika untuk KLIK ---
+        link.addEventListener('click', (e) => {
+            // Cek jika ini tampilan mobile atau desktop
+            if (window.innerWidth <= 992) { // Perilaku untuk Mobile
                 e.preventDefault();
+                e.stopPropagation();
                 
-                // Close other open dropdowns
-                document.querySelectorAll('.dropdown.active').forEach(otherDropdown => {
+                // Tutup dropdown lainnya sebelum membuka yang baru
+                document.querySelectorAll('.nav-item.dropdown').forEach(otherDropdown => {
                     if (otherDropdown !== dropdown) {
                         otherDropdown.classList.remove('active');
                     }
                 });
                 
-                // Toggle current dropdown
                 dropdown.classList.toggle('active');
+            } else { // Perilaku untuk Desktop
+                e.preventDefault();
+                e.stopPropagation();
+                const wasActive = dropdown.classList.contains('active');
+                
+                // Tutup semua dropdown lain terlebih dahulu
+                document.querySelectorAll('.nav-item.dropdown').forEach(d => {
+                    if (d !== dropdown) {
+                        d.classList.remove('active');
+                    }
+                });
+                
+                // Jika yang diklik tadi belum aktif, aktifkan sekarang
+                if (!wasActive) {
+                    dropdown.classList.add('active');
+                }
             }
-        };
-
-        // Event listeners
-        dropdown.addEventListener('mouseenter', openDropdown);
-        dropdown.addEventListener('mouseleave', closeDropdown);
-        link.addEventListener('click', toggleDropdownMobile);
+        });
     });
 
-    // --- Set Active State for Navigation Links ---
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-list .nav-link').forEach(link => {
-        const linkPage = link.getAttribute('href').split('/').pop();
-        
-        if (linkPage === currentPage) {
-            link.classList.add('active');
-            
-            // Activate parent dropdown if exists
-            const parentDropdown = link.closest('.dropdown');
-            if (parentDropdown) {
-                parentDropdown.querySelector('a.nav-link').classList.add('active');
+    // --- 4. Menutup Dropdown Saat Klik di Luar Area ---
+    document.addEventListener('click', (e) => {
+        // Untuk desktop
+        if (window.innerWidth > 992) {
+            const openDropdown = document.querySelector('.nav-item.dropdown.active');
+            if (openDropdown && !openDropdown.contains(e.target)) {
+                openDropdown.classList.remove('active');
             }
         }
-    });
-
-    // Close dropdowns when clicking outside (mobile view)
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 992 && navbar.classList.contains('active')) {
-            if (!e.target.closest('.navbar') && !e.target.closest('.nav-toggle')) {
+        // Untuk mobile
+        else {
+            const navbarActive = navbar && navbar.classList.contains('active');
+            if (navbarActive && !e.target.closest('.navbar') && !e.target.closest('.nav-toggle')) {
                 navbar.classList.remove('active');
-                navToggle.setAttribute('aria-expanded', 'false');
-                
-                const icon = navToggle.querySelector('i');
-                if (icon) {
-                    icon.classList.replace('fa-times', 'fa-bars');
+                if (navToggle) {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    const icon = navToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.replace('fa-times', 'fa-bars');
+                    }
                 }
-                
-                // Close all dropdowns
-                document.querySelectorAll('.dropdown.active').forEach(dropdown => {
+                // Tutup semua dropdown
+                document.querySelectorAll('.nav-item.dropdown.active').forEach(dropdown => {
                     dropdown.classList.remove('active');
                 });
             }
         }
+    });
+
+    // --- 5. Handle Window Resize ---
+    window.addEventListener('resize', () => {
+        // Jika beralih dari mobile ke desktop, pastikan navbar tidak tetap aktif
+        if (window.innerWidth > 992 && navbar && navbar.classList.contains('active')) {
+            navbar.classList.remove('active');
+            if (navToggle) {
+                navToggle.setAttribute('aria-expanded', 'false');
+                const icon = navToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            }
+        }
+        
+        // Tutup semua dropdown saat resize
+        document.querySelectorAll('.nav-item.dropdown.active').forEach(dropdown => {
+            dropdown.classList.remove('active');
+        });
     });
 });

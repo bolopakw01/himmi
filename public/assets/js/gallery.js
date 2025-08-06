@@ -1,120 +1,120 @@
-// File: public/assets/js/gallery.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Bagian Filter Galeri ---
+    // --- Inisialisasi Elemen ---
+    const galleryGrid = document.querySelector('.gallery-grid');
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    let currentDivisiFilter = 'all';
-    let currentAcaraFilter = 'all-event';
-
-    if (filterButtons.length > 0 && galleryItems.length > 0) {
-        filterButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const filterGroup = button.closest('.filter-group');
-                if (!filterGroup) return;
-
-                const buttonsInGroup = filterGroup.querySelectorAll('.filter-btn');
-                buttonsInGroup.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                const filterValue = button.dataset.filter;
-
-                // Tentukan jenis filter berdasarkan data-attribute
-                if (filterValue.includes('event') || filterValue === 'all-event') {
-                    currentAcaraFilter = filterValue;
-                } else {
-                    currentDivisiFilter = filterValue;
-                }
-
-                // Jalankan fungsi untuk memfilter item
-                applyFilters();
-            });
-        });
-
-        function applyFilters() {
-            galleryItems.forEach(item => {
-                const itemDivisi = item.dataset.divisi || 'all';
-                const itemAcara = item.dataset.acara || 'all-event';
-
-                const divisiMatch = currentDivisiFilter === 'all' || itemDivisi === currentDivisiFilter;
-                const acaraMatch = currentAcaraFilter === 'all-event' || itemAcara === currentAcaraFilter;
-                
-                if (divisiMatch && acaraMatch) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-    }
-
-
-    // --- Bagian Lightbox ---
     const lightbox = document.getElementById('lightbox');
+
+    if (!galleryGrid || !lightbox) return;
+
+    // Inisialisasi Elemen Lightbox
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxLoading = document.querySelector('.lightbox-loading');
     const closeBtn = document.getElementById('close-btn');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    
-    if (lightbox) {
-        let visibleItems = [];
-        let currentIndex = 0;
 
-        document.querySelectorAll('.gallery-img').forEach(img => {
-            img.addEventListener('click', () => {
-                // Update daftar item yang terlihat setiap kali gambar diklik
-                visibleItems = Array.from(document.querySelectorAll('.gallery-item'))
-                                   .filter(item => window.getComputedStyle(item).display !== 'none');
-                
-                const clickedItem = img.closest('.gallery-item');
-                currentIndex = visibleItems.indexOf(clickedItem);
+    // --- State Management ---
+    let filterState = {
+        divisi: 'all',
+        acara: 'all-event',
+    };
+    // Variabel khusus untuk lightbox
+    let lightboxItems = [];
+    let currentIndex = 0;
 
-                if (currentIndex !== -1) {
-                    updateLightbox();
-                    lightbox.style.display = 'flex';
-                }
-            });
+    // --- Fungsi Filter ---
+    const applyFilters = () => {
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            const isDivisiMatch = filterState.divisi === 'all' || item.dataset.divisi === filterState.divisi;
+            const isAcaraMatch = filterState.acara === 'all-event' || item.dataset.acara === filterState.acara;
+            item.style.display = (isDivisiMatch && isAcaraMatch) ? 'block' : 'none';
         });
+    };
 
-        function updateLightbox() {
-            if (visibleItems.length === 0 || currentIndex < 0) return;
+    filterButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const groupElement = button.closest('.filter-group');
+            filterState[groupElement.dataset.group] = button.dataset.filter;
+            groupElement.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            applyFilters();
+        });
+    });
 
-            const currentItem = visibleItems[currentIndex];
-            const currentImg = currentItem.querySelector('.gallery-img');
-            const captionEl = currentItem.querySelector('.gallery-caption h3');
-            
-            lightboxImg.src = currentImg.src;
-            if (captionEl) {
-                lightboxCaption.textContent = captionEl.textContent;
-            } else {
-                lightboxCaption.textContent = '';
-            }
+    // --- PERBAIKAN UTAMA: Logika Lightbox ---
+    const updateLightbox = () => {
+        // Tampilkan/sembunyikan tombol navigasi
+        const showNav = lightboxItems.length > 1;
+        prevBtn.style.display = showNav ? 'flex' : 'none';
+        nextBtn.style.display = showNav ? 'flex' : 'none';
+        
+        const currentPhoto = lightboxItems[currentIndex];
+        
+        lightboxLoading.style.display = 'block';
+        lightboxImg.style.opacity = 0;
+
+        const highResImg = new Image();
+        highResImg.src = currentPhoto.path;
+        highResImg.onload = () => {
+            lightboxImg.src = highResImg.src;
+            lightboxCaption.textContent = currentPhoto.caption;
+            lightboxLoading.style.display = 'none';
+            lightboxImg.style.opacity = 1;
+        };
+    };
+
+    const openLightbox = (clickedItem) => {
+        // Ambil data foto dari atribut data-photos
+        lightboxItems = JSON.parse(clickedItem.dataset.photos);
+        currentIndex = 0; // Selalu mulai dari gambar pertama (cover)
+        
+        if (lightboxItems.length > 0) {
+            document.body.style.overflow = 'hidden';
+            updateLightbox();
+            lightbox.style.display = 'flex';
         }
+    };
 
-        // Event Listeners untuk Lightbox
-        closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
-            updateLightbox();
-        });
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % visibleItems.length;
-            updateLightbox();
-        });
-        lightbox.addEventListener('click', e => {
-            if (e.target === lightbox) {
-                lightbox.style.display = 'none';
-            }
-        });
-        document.addEventListener('keydown', e => {
-            if (lightbox.style.display === 'flex') {
-                if (e.key === 'Escape') closeBtn.click();
-                if (e.key === 'ArrowLeft') prevBtn.click();
-                if (e.key === 'ArrowRight') nextBtn.click();
-            }
-        });
-    }
+    const closeLightbox = () => {
+        lightbox.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    const showPrevImage = () => {
+        currentIndex = (currentIndex - 1 + lightboxItems.length) % lightboxItems.length;
+        updateLightbox();
+    };
+
+    const showNextImage = () => {
+        currentIndex = (currentIndex + 1) % lightboxItems.length;
+        updateLightbox();
+    };
+
+    // Event Delegation untuk membuka lightbox
+    galleryGrid.addEventListener('click', (e) => {
+        const galleryItem = e.target.closest('.gallery-item');
+        if (galleryItem) {
+            openLightbox(galleryItem);
+        }
+    });
+
+    closeBtn.addEventListener('click', closeLightbox);
+    prevBtn.addEventListener('click', showPrevImage);
+    nextBtn.addEventListener('click', showNextImage);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.style.display === 'flex') {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') showPrevImage();
+            if (e.key === 'ArrowRight') showNextImage();
+        }
+    });
+    
+    // Inisialisasi tinggi grid untuk mencegah "lompat"
+    setTimeout(() => {
+        galleryGrid.style.minHeight = `${galleryGrid.offsetHeight}px`;
+    }, 500);
 });

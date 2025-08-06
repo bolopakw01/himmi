@@ -80,15 +80,29 @@
             <h2 class="section-title">Galeri Kegiatan</h2>
             <p class="section-subtitle">Momen berharga dari berbagai kegiatan yang telah kami selenggarakan.</p>
         </div>
-        <div class="gallery-grid-summary">
-            <div class="gallery-item-summary"><img src="{{ asset('assets/img/gallery/5.png') }}" alt="Kegiatan Seminar"></div>
-            <div class="gallery-item-summary"><img src="{{ asset('assets/img/gallery/6.png') }}" alt="Kegiatan Workshop"></div>
-            <div class="gallery-item-summary"><img src="{{ asset('assets/img/gallery/7.png') }}" alt="Kegiatan Kolaborasi"></div>
-            <div class="gallery-item-summary"><img src="{{ asset('assets/img/gallery/12.png') }}" alt="Kegiatan Keakraban"></div>
-        </div>
-        <div class="section-cta">
-            <a href="{{ url('/galeri') }}" class="cta-btn">Kunjungi Galeri Lengkap</a>
-        </div>
+
+        {{-- Cek apakah ada galeri untuk ditampilkan --}}
+        @if($latestGalleries->isNotEmpty())
+            <div class="gallery-grid-summary">
+                {{-- Loop melalui 4 galeri terbaru --}}
+                @foreach ($latestGalleries as $gallery)
+                    <a href="{{ route('galeri') }}" class="gallery-item-summary">
+                        {{-- Tampilkan foto pertama dari setiap album --}}
+                        <img src="{{ asset('storage/' . $gallery->photos->first()->path) }}" alt="{{ $gallery->title }}">
+                        <div class="gallery-item-overlay">
+                            {{-- <h3>{{ $gallery->title }}</h3> --}}
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+            <div class="section-cta">
+                <a href="{{ route('galeri') }}" class="cta-btn">Kunjungi Galeri Lengkap</a>
+            </div>
+        @else
+            <div class="text-center text-gray-500">
+                <p>Belum ada kegiatan yang didokumentasikan.</p>
+            </div>
+        @endif
     </div>
 </section>
 @endsection
